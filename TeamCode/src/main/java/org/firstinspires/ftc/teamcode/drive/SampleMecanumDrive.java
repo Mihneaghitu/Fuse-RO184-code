@@ -27,6 +27,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 
 import org.firstinspires.ftc.teamcode.util.DashboardUtil;
@@ -75,9 +76,16 @@ public class SampleMecanumDrive extends MecanumDrive {
 
     private List<Pose2d> poseHistory;
 
-    private DcMotorEx leftFront, leftRear, rightRear, rightFront;
+    private DcMotorEx leftFront, leftBack, rightBack, rightFront;
+    public DcMotor suptStanga       = null;
+    public DcMotor suptDreapta      = null;
+    public DcMotor glisiere         = null;
+    public BNO055IMU imu            = null;
+    public Servo prins              = null;
+    public Servo intoarcere         = null;
+    public Servo prins_fundatie_stg = null;
+    public Servo prins_fundatie_dr  = null;
     private List<DcMotorEx> motors;
-    private BNO055IMU imu;
 
     public SampleMecanumDrive(HardwareMap hardwareMap) {
         super(kV, kA, kStatic, TRACK_WIDTH);
@@ -114,12 +122,20 @@ public class SampleMecanumDrive extends MecanumDrive {
         // upward (normal to the floor) using a command like the following:
         // BNO055IMUUtil.remapAxes(imu, AxesOrder.XYZ, AxesSigns.NPN);
 
-        leftFront = hardwareMap.get(DcMotorEx.class, "leftFront");
-        leftRear = hardwareMap.get(DcMotorEx.class, "leftRear");
-        rightRear = hardwareMap.get(DcMotorEx.class, "rightRear");
-        rightFront = hardwareMap.get(DcMotorEx.class, "rightFront");
+        leftFront          = hardwareMap.get(DcMotorEx.class, "left_front");
+        leftBack           = hardwareMap.get(DcMotorEx.class, "left_back");
+        rightBack          = hardwareMap.get(DcMotorEx.class, "right_back");
+        rightFront         = hardwareMap.get(DcMotorEx.class, "right_front");
+        suptDreapta        = hardwareMap.get(DcMotor.class, "supt_dreapta");
+        suptStanga         = hardwareMap.get(DcMotor.class, "supt_stanga");
+        glisiere           = hardwareMap.get(DcMotor.class, "glisiere");
+        imu                = hardwareMap.get(BNO055IMU.class, "imu");
+        prins              = hardwareMap.get(Servo.class, "prins");
+        intoarcere         = hardwareMap.get(Servo.class, "intoarcere");
+        prins_fundatie_dr  = hardwareMap.get(Servo.class, "prins_fundatie_dr");
+        prins_fundatie_stg = hardwareMap.get(Servo.class, "prins_fundatie_stg");
 
-        motors = Arrays.asList(leftFront, leftRear, rightRear, rightFront);
+        motors = Arrays.asList(leftFront, leftBack, rightBack, rightFront);
 
         for (DcMotorEx motor : motors) {
             MotorConfigurationType motorConfigurationType = motor.getMotorType().clone();
@@ -138,13 +154,18 @@ public class SampleMecanumDrive extends MecanumDrive {
         }
 
         // TODO: reverse any motors using DcMotor.setDirection()
-
+        rightFront.setDirection(DcMotorEx.Direction.REVERSE);
+        rightBack.setDirection(DcMotorEx.Direction.REVERSE);
         // TODO: if desired, use setLocalizer() to change the localization method
         // for instance, setLocalizer(new ThreeTrackingWheelLocalizer(...));
     }
 
     public TrajectoryBuilder trajectoryBuilder(Pose2d startPose) {
         return new TrajectoryBuilder(startPose, constraints);
+    }
+
+    public TrajectoryBuilder trajectoryBuilder(Pose2d startPose, boolean reversed) {
+        return new TrajectoryBuilder(startPose, reversed, constraints);
     }
 
     public TrajectoryBuilder trajectoryBuilder(Pose2d startPose, double startHeading) {
@@ -323,8 +344,8 @@ public class SampleMecanumDrive extends MecanumDrive {
     @Override
     public void setMotorPowers(double v, double v1, double v2, double v3) {
         leftFront.setPower(v);
-        leftRear.setPower(v1);
-        rightRear.setPower(v2);
+        leftBack.setPower(v1);
+        rightBack.setPower(v2);
         rightFront.setPower(v3);
     }
 

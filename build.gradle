@@ -21,3 +21,8 @@ allprojects {
         jcenter()
     }
 }
+allprojects {
+    repositories {
+        maven { url 'https://jitpack.io' } // this line!
+    }
+}
