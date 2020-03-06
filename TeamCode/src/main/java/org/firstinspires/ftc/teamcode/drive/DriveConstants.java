@@ -68,8 +68,8 @@ public class DriveConstants {
      */
     //TODO PUNE IN PLM CONSTRAINT-URILE MAI MARI
     public static DriveConstraints BASE_CONSTRAINTS = new DriveConstraints(
-            30.0, 30.0, 0.0,
-            Math.toRadians(180.0), Math.toRadians(180.0), 0.0
+            45.0, 70.0, 0.0,
+            Math.toRadians(190.0), Math.toRadians(250.0), 0.0
     );
 
 
